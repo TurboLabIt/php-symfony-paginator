@@ -1,0 +1,4 @@
+services:
+    TurboLabIt\PaginatorBundle\Service\Paginator:
+      autowire: true
+      public: true
