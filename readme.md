@@ -14,9 +14,11 @@ symfony composer require turbolabit/paginatorbundle:dev-main
 
 ## 🏗️ Use it
 
+
+**src/Service/Paginator.php**
+
 ````php
 <?php
-// src/Service/Paginator.php
 namespace App\Service;
 
 use \TurboLabIt\PaginatorBundle\Service\Paginator as BasePaginator;
@@ -30,9 +32,10 @@ class Paginator extends BasePaginator
 ````
 
 
+**src/Controller/ListingController.php**
+
 ````php
 <?php
-// src/Controller/ListingController.php
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
