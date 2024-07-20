@@ -57,11 +57,14 @@ class ListingController extends AbstractController
 
 
     #[Route('/{categorySlug}/', name: 'app_listing', priority: -99)]
-    public function listing(string $wpCategorySlug) : Response
+    public function listing(string $categorySlug) : Response
     {
-        $currentPage     = $this->request->get('p') ?? 1; 
-        $totalPages      = 99;
-        $oPages          = $this->paginator->build($currentPage, $totalPages);
+        $currentPage    = $this->request->get('p') ?? 1; 
+        $totalPages     = 99;
+        $oPages =
+            $this->paginator
+                ->setBaseUrl('/' . $categorySlug . '/')
+                ->build($currentPage, $totalPages);
 
         return $this->render('listing.html.twig', [
             'page'      => $currentPage,
