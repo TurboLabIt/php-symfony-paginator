@@ -1,6 +1,7 @@
 <?php
 namespace TurboLabIt\PaginatorBundle\Service;
 
+use stdClass;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorException;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorMissingBaseUrlException;
 use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
@@ -8,11 +9,19 @@ use TurboLabIt\PaginatorBundle\Exception\PaginatorOverflowException;
 
 class Paginator
 {
+    const MODE_PARAM                            = 'param';
+    const MODE_LAST_SLUG                        = 'last-slug';
+    const MODE_LAST_SLUG_WITH_TRAILING_SLASH    = 'last-slug-with-trailing-slash';
+
     protected string $baseUrl;
-    protected string $pageParam = 'p';
-    protected int $slotNum      = 3;
+    protected string $baseUrlForPages;
+    protected string $pageParam         = 'p';
+    protected int $slotNum              = 5;
+    protected int $itemsPerPage         = 25;
+    protected string $mode              = self::MODE_PARAM;
 
 
+    //<editor-fold defaultstate="collapsed" desc="CUSTOMIZABLE OPTIONS">
     public function setBaseUrl(string $unpaginatedUrl) : static
     {
         $this->baseUrl = $unpaginatedUrl;
@@ -20,10 +29,17 @@ class Paginator
     }
 
 
+    public function setBaseUrlForPages(string $unpaginatedUrl) : static
+    {
+        $this->baseUrlForPages = $unpaginatedUrl;
+        return $this;
+    }
+
+
     public function setSlotNum(int $slotNum) : static
     {
         if( empty($slotNum) || $slotNum < 3 ) {
-            throw new PaginatorException('Cannot set the number of visible pages to less than 3 (prev, curr, next');
+            throw new PaginatorException('Cannot set the number of visible pages to less than 3 (prev, curr, next)');
         }
 
         $this->slotNum = $slotNum;
@@ -31,7 +47,20 @@ class Paginator
     }
 
 
-    public function build(?int $currentPage, int $totalPages) : \stdClass
+    public function setItemsPerPageNum(int $itemsNum) : static
+    {
+        if( empty($itemsNum) || $itemsNum < 1 ) {
+            throw new PaginatorException('Cannot set the number of items per page to less than 1');
+        }
+
+        $this->itemsPerPage = $itemsNum;
+        return $this;
+    }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="🏗️ BUILD METHODS 🏗️">
+    public function build(?int $currentPage, int $totalPages) : stdClass
     {
         $currentPage = $currentPage ?: 1;
         $this->validateInput($currentPage, $totalPages);
@@ -78,19 +107,54 @@ class Paginator
     }
 
 
+    public function buildByTotalItems(?int $currentPage, int $totalItems) : stdClass
+    {
+        $totalPages = (int)ceil($totalItems / $this->itemsPerPage);
+        $totalPages = empty($totalPages) ? 1 : $totalPages;
+        return $this->build($currentPage, $totalPages);
+    }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="PUBLIC GETTERS">
+    public function getItemsPerPageNum() : int { return $this->itemsPerPage; }
+
+
+    public function getBaseUrl(int $pageNum = 1) : string
+    {
+        $pageNum = empty($pageNum) ? 1 : $pageNum;
+
+        if( $pageNum < 0 ) {
+            throw new PaginatorException('Cannot build the baseUrl for a negative page');
+        }
+
+        if( $pageNum == 1 && empty($this->baseUrl) ) {
+            throw new PaginatorMissingBaseUrlException("baseUrl not set");
+        }
+
+        if( $pageNum == 1 || empty($this->baseUrlForPages) ) {
+            return $this->baseUrl;
+        }
+
+        return $this->baseUrlForPages;
+    }
+    //</editor-fold>
+
+
+    //<editor-fold defaultstate="collapsed" desc="INTERNAL METHODS">
     protected function validateInput(?int $currentPage, int $totalPages) : void
     {
         if( empty($currentPage) || $currentPage < 0 ) {
-            throw new PaginatorException('The current page cannot be zero or less than zero');
+            throw new PaginatorException('The current page cannot be zero or less');
         }
 
         if( empty($totalPages) || $totalPages < 0 ) {
-            throw new PaginatorException('The total number of pages cannot be zero or less than zero');
+            throw new PaginatorException('The total number of pages cannot be zero or less');
         }
 
         if( $currentPage > $totalPages ) {
             throw
-                (new PaginatorOverflowException('The current page cannot be greater than the total number of pages'))
+            (new PaginatorOverflowException('The current page cannot be greater than the total number of pages'))
                 ->setMaxPage($totalPages);
         }
 
@@ -110,18 +174,18 @@ class Paginator
         $arrNavigation["first"] = $this->buildItem('First', $urlFirstPage);
 
         //
-        $urlPrevPage = $currentPage > 1 ? $this->buildUrlWithPageParam($this->baseUrl, $currentPage - 1) : null;
+        $urlPrevPage = $currentPage > 1 ? $this->buildUrlWithPageParam($currentPage - 1) : null;
         $arrNavigation["prev"] = $this->buildItem('Prev', $urlPrevPage);
 
         //
         $arrNavigation['pages'] = [];
 
         //
-        $urlNextPage = $currentPage < $totalPages ? $this->buildUrlWithPageParam($this->baseUrl, $currentPage + 1) : null;
+        $urlNextPage = $currentPage < $totalPages ? $this->buildUrlWithPageParam($currentPage + 1) : null;
         $arrNavigation["next"] = $this->buildItem('Next', $urlNextPage);
 
         //
-        $lastPageUrl = $currentPage < $totalPages ? $this->buildUrlWithPageParam($this->baseUrl, $totalPages) : null;
+        $lastPageUrl = $currentPage < $totalPages ? $this->buildUrlWithPageParam($totalPages) : null;
         $arrNavigation["last"] = $this->buildItem('Last', $lastPageUrl);
 
         return $arrNavigation;
@@ -134,7 +198,7 @@ class Paginator
         for( $i = $startAt; $i <= $totalPages; $i++ ) {
             $arrPages[] = (object)[
                 "label" => $i,
-                "url"   => $i == $currentPage ? null : $this->buildUrlWithPageParam($this->baseUrl, $i)
+                "url"   => $i == $currentPage ? null : $this->buildUrlWithPageParam($i)
             ];
         }
 
@@ -142,7 +206,7 @@ class Paginator
     }
 
 
-    public function buildItem(string $label, ?string $url = null) : \stdClass
+    protected function buildItem(string $label, ?string $url = null) : stdClass
     {
         $arrItem = [
             "label" => $label,
@@ -153,15 +217,39 @@ class Paginator
     }
 
 
-    protected function buildUrlWithPageParam(string $unpaginatedUrl, ?int $pageNum) : string
+    protected function buildUrlWithPageParam(?int $pageNum) : string
     {
+        $unpaginatedUrl = $this->getBaseUrl($pageNum);
+
         if( empty($pageNum) || $pageNum == 1 ) {
             return $unpaginatedUrl;
         }
 
-        $unpaginatedUrl .= stripos($unpaginatedUrl, '?') === false ? '?' : '&';
+        if( $this->mode == static::MODE_PARAM ) {
 
-        $urlWithPageParam = $unpaginatedUrl . $this->pageParam . "=" . $pageNum;
-        return $urlWithPageParam;
+            $unpaginatedUrl    .= stripos($unpaginatedUrl, '?') === false ? '?' : '&';
+            $urlWithPageParam   = $unpaginatedUrl . $this->pageParam . "=" . $pageNum;
+            return $urlWithPageParam;
+        }
+
+        if( in_array($this->mode, [static::MODE_LAST_SLUG, static::MODE_LAST_SLUG_WITH_TRAILING_SLASH]) ) {
+
+            $urlWithPageParam = $unpaginatedUrl;
+
+            if( substr($urlWithPageParam, -1) != '/' ) {
+                $urlWithPageParam .= '/';
+            }
+
+            $urlWithPageParam .= $pageNum;
+
+            if( $this->mode == static::MODE_LAST_SLUG_WITH_TRAILING_SLASH ) {
+                $urlWithPageParam .= "/";
+            }
+
+            return $urlWithPageParam;
+        }
+
+        throw new PaginatorException('Unknown Pagination Mode used');
     }
+    //</editor-fold>
 }
