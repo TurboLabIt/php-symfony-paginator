@@ -45,7 +45,7 @@ abstract class BaseT extends TestCase
 
     protected function getPages(?int $currentPage, int $totalPages) : \stdClass
     {
-        $oPages     = $this->getInstance()->build($currentPage, $totalPages);
+        $oPages = $this->getInstance()->build($currentPage, $totalPages);
         $this->assertIsObject($oPages);
         foreach(['first', 'prev', 'pages', 'next', 'last'] as $key) {
             $this->assertObjectHasProperty($key, $oPages);

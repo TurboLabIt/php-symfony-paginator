@@ -11,15 +11,13 @@ class BundleTest extends BaseT
 {
     const TESTED_SERVICE_FQN    = 'TurboLabIt\PaginatorBundle\Service\Paginator';
     const BASE_URL              = 'https://test.com';
-    const SLOT_NUM              = 3;
 
 
     protected function getInstance()
     {
         return
             parent::getInstance()
-                ->setBaseUrl(static::BASE_URL)
-                ->setSlotNum(static::SLOT_NUM);
+                ->setBaseUrl(static::BASE_URL);
     }
 
 

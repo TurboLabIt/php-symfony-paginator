@@ -95,12 +95,11 @@ class Paginator
             // Some pages are hidden before, some pages are visible, some pages are hidden after
         } else {
 
+            $startAt        = $currentPage - floor($this->slotNum / 2);
+            $totalPages     = $currentPage + floor($this->slotNum / 2);
+            $arrAllPages    = $this->buildAllPages($currentPage, $totalPages, $startAt);
             $arrPaginator["pages"] =
-                array_merge(
-                    [$this->buildItem('...')],
-                    $this->buildAllPages($currentPage, $currentPage + 1, $currentPage - 1),
-                    [$this->buildItem('...')],
-                );
+                array_merge( [$this->buildItem('...')], $arrAllPages, [$this->buildItem('...')] );
         }
 
         return (object)$arrPaginator;
