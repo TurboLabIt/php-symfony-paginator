@@ -79,7 +79,7 @@ class Paginator
         } elseif( $currentPage <= $this->slotNum ) {
 
             $arrPaginator["pages"] = $this->buildAllPages($currentPage, $this->slotNum + 1);
-            $arrPaginator["pages"][] = $this->buildItem('...');
+            $arrPaginator["pages"][] = $this->buildItem('...', true);
 
             // CASE C: ...,97,98,99,100
             // Some pages are hidden, but the last ones are visible
@@ -87,7 +87,7 @@ class Paginator
 
             $arrPaginator["pages"] =
                 array_merge(
-                    [$this->buildItem('...')],
+                    [$this->buildItem('...', true)],
                     $this->buildAllPages($currentPage, $totalPages, $totalPages - $this->slotNum)
                 );
 
@@ -99,7 +99,7 @@ class Paginator
             $totalPages     = $currentPage + floor($this->slotNum / 2);
             $arrAllPages    = $this->buildAllPages($currentPage, $totalPages, $startAt);
             $arrPaginator["pages"] =
-                array_merge( [$this->buildItem('...')], $arrAllPages, [$this->buildItem('...')] );
+                array_merge( [$this->buildItem('...', true)], $arrAllPages, [$this->buildItem('...', true)] );
         }
 
         return (object)$arrPaginator;
@@ -170,22 +170,22 @@ class Paginator
 
         //
         $urlFirstPage = $currentPage > 1 ? $this->baseUrl : null;
-        $arrNavigation["first"] = $this->buildItem('First', $urlFirstPage);
+        $arrNavigation["first"] = $this->buildItem('First', false, $urlFirstPage);
 
         //
         $urlPrevPage = $currentPage > 1 ? $this->buildUrlWithPageParam($currentPage - 1) : null;
-        $arrNavigation["prev"] = $this->buildItem('Prev', $urlPrevPage);
+        $arrNavigation["prev"] = $this->buildItem('Prev', false, $urlPrevPage);
 
         //
         $arrNavigation['pages'] = [];
 
         //
         $urlNextPage = $currentPage < $totalPages ? $this->buildUrlWithPageParam($currentPage + 1) : null;
-        $arrNavigation["next"] = $this->buildItem('Next', $urlNextPage);
+        $arrNavigation["next"] = $this->buildItem('Next', false, $urlNextPage);
 
         //
         $lastPageUrl = $currentPage < $totalPages ? $this->buildUrlWithPageParam($totalPages) : null;
-        $arrNavigation["last"] = $this->buildItem('Last', $lastPageUrl);
+        $arrNavigation["last"] = $this->buildItem('Last', false, $lastPageUrl);
 
         return $arrNavigation;
     }
@@ -195,21 +195,21 @@ class Paginator
     {
         $arrPages = [];
         for( $i = $startAt; $i <= $totalPages; $i++ ) {
-            $arrPages[] = (object)[
-                "label" => $i,
-                "url"   => $i == $currentPage ? null : $this->buildUrlWithPageParam($i)
-            ];
+
+            $url        = $i == $currentPage ? null : $this->buildUrlWithPageParam($i);
+            $arrPages[] = $this->buildItem($i, false, $url);
         }
 
         return $arrPages;
     }
 
 
-    protected function buildItem(string $label, ?string $url = null) : stdClass
+    protected function buildItem(string $label, bool $isDots, ?string $url = null) : stdClass
     {
         $arrItem = [
-            "label" => $label,
-            "url"   => $url
+            "label"     => $label,
+            "url"       => $url,
+            "isDots"    => $isDots
         ];
 
         return (object)$arrItem;

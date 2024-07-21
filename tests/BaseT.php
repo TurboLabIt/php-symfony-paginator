@@ -38,7 +38,7 @@ abstract class BaseT extends TestCase
 
     protected function checkOneOfOne(\stdClass $oPages)
     {
-        $oExpected = '{"first":{"label":"First","url":null},"prev":{"label":"Prev","url":null},"pages":[{"label":1,"url":null}],"next":{"label":"Next","url":null},"last":{"label":"Last","url":null}}';
+        $oExpected = '{"first":{"label":"First","url":null,"isDots":false},"prev":{"label":"Prev","url":null,"isDots":false},"pages":[{"label":"1","url":null,"isDots":false}],"next":{"label":"Next","url":null,"isDots":false},"last":{"label":"Last","url":null,"isDots":false}}';
         $this->assertEquals($oExpected, json_encode($oPages));
     }
 

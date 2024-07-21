@@ -32,7 +32,7 @@
 
             {% for Page in Pages.pages %}
                 {% block paginationPage %}
-                    <li class="page-item {% if Page.url is empty %}active{% endif %}">
+                    <li class="page-item {% if Page.url is empty and not Page.isDots %}active{% endif %}">
                         {% if Page.url is empty %}
                             <span class="page-link">{{ Page.label }}</span>
                         {% else %}
