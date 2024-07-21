@@ -18,6 +18,7 @@
   </php>
   <testsuites>
     <testsuite name="default">
+      <file>tests/BundleTest.php</file>
       <directory>tests</directory>
     </testsuite>
   </testsuites>

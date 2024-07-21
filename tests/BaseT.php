@@ -30,28 +30,29 @@ abstract class BaseT extends TestCase
 
     protected static function getService(string $name)
     {
-        // boots the kernel and prevents LogicException:
-        // Booting the kernel before calling "WebTestCase::createClient()" is not supported, the kernel should only be booted once.
-        if(false && empty(static::$client) ) {
-
-            static::$client = static::createClient();
-            static::$client->setServerParameter('HTTP_HOST', $_ENV["APP_SITE_DOMAIN"]);
-            static::$client->setServerParameter('HTTPS', 'https');
-        }
-
         $container = static::$kernelT->getContainer();
         $service = $container->get($name);
         return $service;
     }
 
 
-
-
-    /*protected function tearDown(): void
+    protected function checkOneOfOne(\stdClass $oPages)
     {
-        self::ensureKernelShutdown();
-        static::$crawler = null;
-    }*/
+        $oExpected = '{"first":{"label":"First","url":null},"prev":{"label":"Prev","url":null},"pages":[{"label":1,"url":null}],"next":{"label":"Next","url":null},"last":{"label":"Last","url":null}}';
+        $this->assertEquals($oExpected, json_encode($oPages));
+    }
+
+
+    protected function getPages(?int $currentPage, int $totalPages) : \stdClass
+    {
+        $oPages     = $this->getInstance()->build($currentPage, $totalPages);
+        $this->assertIsObject($oPages);
+        foreach(['first', 'prev', 'pages', 'next', 'last'] as $key) {
+            $this->assertObjectHasProperty($key, $oPages);
+        }
+
+        return $oPages;
+    }
 }
 
 
