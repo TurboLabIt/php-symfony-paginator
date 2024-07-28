@@ -22,6 +22,9 @@
       "TurboLabIt\\PaginatorBundle\\Tests\\": "tests/"
     }
   },
+  "require": {
+    "symfony/translation": "@stable"
+  },
   "require-dev": {
     "symfony/framework-bundle": "@stable",
     "symfony/dotenv": "@stable",

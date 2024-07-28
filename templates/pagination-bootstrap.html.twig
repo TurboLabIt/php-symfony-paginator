@@ -1,31 +1,49 @@
 {% if (Pages ?? null) is not empty %}
-    <nav aria-label="Paginazione">
+    <nav aria-label="{{ 'Pagination'|trans }}">
         <ul class="pagination justify-content-center">
 
+            <li>{{ 'First'|trans }}</li>
+
             {% block paginationFirst %}
-                <li class="page-item">
-                    {% if Pages.first.url is not empty %}
-                        <a class="page-link" href="{{ Pages.first.url }}" aria-label="Inizio">
+                <li class="page-item {% if Pages.first.url is empty %}disabled{% endif %}" title="{{ 'First'|trans }}">
+
+                    {% if Pages.first.url is empty %}
+                        <span class="page-link">
+                     {% else %}
+                        <a class="page-link" href="{{ Pages.first.url }}" aria-label="{{ 'First'|trans }}">
                     {% endif %}
 
-                    <span aria-hidden="true"><i class="fa-solid fa-backward-fast"></i></span>
-                    <span class="{% if Pages.first.url is empty %}page-link{% endif %} sr-only">Inizio</span>
+                        <span aria-hidden="true"><i class="fa-solid fa-backward-fast"></i></span>
+                        <span class="sr-only">{{ 'First'|trans }}</span>
 
-                    {% if Pages.first.url is not empty %}</a>{% endif %}
+                    {% if Pages.first.url is empty %}
+                        </span>
+                     {% else %}
+                        </a>
+                    {% endif %}
+
                 </li>
             {% endblock %}
 
 
             {% block paginationPrev %}
-                <li class="page-item">
-                    {% if Pages.prev.url is not empty %}
-                        <a class="page-link" href="{{ Pages.prev.url }}" aria-label="Precedente">
+                <li class="page-item {% if Pages.prev.url is empty %}disabled{% endif %}" title="{{ 'Previous'|trans }}">
+
+                    {% if Pages.prev.url is empty %}
+                        <span class="page-link">
+                     {% else %}
+                        <a class="page-link" href="{{ Pages.prev.url }}" aria-label="{{ 'Previous'|trans }}">
                     {% endif %}
 
-                    <span aria-hidden="true"><i class="fa-solid fa-backward-step"></i></span>
-                    <span class="{% if Pages.prev.url is empty %}page-link{% endif %} sr-only">Precedente</span>
+                        <span aria-hidden="true"><i class="fa-solid fa-backward-step"></i></span>
+                        <span class="sr-only">{{ 'Previous'|trans }}</span>
 
-                    {% if Pages.prev.url is not empty %}</a>{% endif %}
+                    {% if Pages.prev.url is empty %}
+                        </span>
+                     {% else %}
+                        </a>
+                    {% endif %}
+
                 </li>
             {% endblock %}
 
@@ -44,29 +62,45 @@
 
 
             {% block paginationNext %}
-                <li class="page-item">
-                    {% if Pages.next.url is not empty %}
-                        <a class="page-link" href="{{ Pages.next.url }}" aria-label="Successivo">
+                <li class="page-item {% if Pages.next.url is empty %}disabled{% endif %}" title="{{ 'Next'|trans }}">
+
+                    {% if Pages.next.url is empty %}
+                        <span class="page-link">
+                     {% else %}
+                        <a class="page-link" href="{{ Pages.next.url }}" aria-label="{{ 'Next'|trans }}">
                     {% endif %}
 
-                    <span aria-hidden="true"><i class="fa-solid fa-forward-step"></i></span>
-                    <span class="{% if Pages.next.url is empty %}page-link{% endif %} sr-only">Successivo</span>
+                        <span aria-hidden="true"><i class="fa-solid fa-forward-step"></i></span>
+                        <span class="sr-only">{{ 'Next'|trans }}</span>
 
-                    {% if Pages.next.url is not empty %}</a>{% endif %}
+                    {% if Pages.next.url is empty %}
+                        </span>
+                     {% else %}
+                        </a>
+                    {% endif %}
+
                 </li>
             {% endblock %}
 
 
             {% block paginationLast %}
-                <li class="page-item">
-                    {% if Pages.last.url is not empty %}
-                        <a class="page-link" href="{{ Pages.last.url }}" aria-label="Fine">
+                <li class="page-item {% if Pages.last.url is empty %}disabled{% endif %}" title="{{ 'Last'|trans }}">
+
+                    {% if Pages.last.url is empty %}
+                        <span class="page-link">
+                     {% else %}
+                        <a class="page-link" href="{{ Pages.last.url }}" aria-label="{{ 'Last'|trans }}">
                     {% endif %}
 
-                    <span aria-hidden="true"><i class="fa-solid fa-forward-fast"></i></span>
-                    <span class="{% if Pages.last.url is empty %}page-link{% endif %} sr-only">Fine</span>
+                        <span aria-hidden="true"><i class="fa-solid fa-forward-fast"></i></span>
+                        <span class="sr-only">{{ 'Last'|trans }}</span>
 
-                    {% if Pages.last.url is not empty %}</a>{% endif %}
+                    {% if Pages.last.url is empty %}
+                        </span>
+                     {% else %}
+                        </a>
+                    {% endif %}
+
                 </li>
             {% endblock %}
 
