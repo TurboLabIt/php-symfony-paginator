@@ -2,8 +2,6 @@
     <nav aria-label="{{ 'Pagination'|trans }}">
         <ul class="pagination justify-content-center">
 
-            <li>{{ 'First'|trans }}</li>
-
             {% block paginationFirst %}
                 <li class="page-item {% if Pages.first.url is empty %}disabled{% endif %}" title="{{ 'First'|trans }}">
 
