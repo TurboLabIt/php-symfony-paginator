@@ -109,5 +109,5 @@ drivers/geckodriver
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
 
-
-/wordpress/
+phpunit.xml.dist*
+tests/bootstrap.php
