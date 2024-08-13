@@ -1,9 +1,9 @@
 {% if (Pages ?? null) is not empty %}
-    <nav aria-label="{{ 'Pagination'|trans }}">
+    <nav class="tli-pagination" aria-label="{{ 'Pagination'|trans }}">
         <ul class="pagination justify-content-center">
 
             {% block paginationFirst %}
-                <li class="page-item {% if Pages.first.url is empty %}disabled{% endif %}"
+                <li class="page-item {% if Pages.first.url is empty %}disabled{% endif %} tli-pagination-first"
                     title="{% if Pages.first.url is empty %}{{ 'You\'re already on the first page'|trans }}{% else %}{{ 'First'|trans }}{% endif %}">
 
                     {% if Pages.first.url is empty %}
@@ -26,7 +26,8 @@
 
 
             {% block paginationPrev %}
-                <li class="page-item {% if Pages.prev.url is empty %}disabled{% endif %}" title="{{ 'Previous'|trans }}">
+                <li class="page-item {% if Pages.prev.url is empty %}disabled{% endif %} tli-pagination-prev"
+                    title="{% if Pages.prev.url is empty %}{{ 'You\'re already on the first page'|trans }}{% else %}{{ 'Previous'|trans }}{% endif %}">
 
                     {% if Pages.prev.url is empty %}
                         <span class="page-link">
@@ -49,7 +50,7 @@
 
             {% for Page in Pages.pages %}
                 {% block paginationPage %}
-                    <li class="page-item {% if Page.url is empty and not Page.isDots %}active{% endif %}">
+                    <li class="page-item {% if Page.url is empty and not Page.isDots %}active{% endif %} tli-pagination-page-num">
                         {% if Page.url is empty %}
                             <span class="page-link">{{ Page.label }}</span>
                         {% else %}
@@ -61,7 +62,8 @@
 
 
             {% block paginationNext %}
-                <li class="page-item {% if Pages.next.url is empty %}disabled{% endif %}" title="{{ 'Next'|trans }}">
+                <li class="page-item {% if Pages.next.url is empty %}disabled{% endif %} tli-pagination-next"
+                    title="{% if Pages.next.url is empty %}{{ 'You\'re already on the last page'|trans }}{% else %}{{ 'Next'|trans }}{% endif %}">
 
                     {% if Pages.next.url is empty %}
                         <span class="page-link">
@@ -83,7 +85,7 @@
 
 
             {% block paginationLast %}
-                <li class="page-item {% if Pages.last.url is empty %}disabled{% endif %}"
+                <li class="page-item {% if Pages.last.url is empty %}disabled{% endif %} tli-pagination-last"
                     title="{% if Pages.last.url is empty %}{{ 'You\'re already on the last page'|trans }}{% else %}{{ 'Last'|trans }}{% endif %}">
 
                     {% if Pages.last.url is empty %}
