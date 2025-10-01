@@ -1,6 +1,6 @@
 {% if (Pages ?? null) is not empty and Pages.pages|length > 1 %}
     <nav class="tli-pagination" aria-label="{{ 'Pagination'|trans }}">
-        <ul class="pagination pagination-sm pagination-md-lg justify-content-center">
+        <ul class="pagination pagination-sm justify-content-center">
 
             {% block paginationFirst %}
                 <li class="page-item {% if Pages.first.url is empty %}disabled{% endif %} tli-pagination-first"
