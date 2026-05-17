@@ -59,7 +59,7 @@ class ListingController extends AbstractController
     #[Route('/{categorySlug}/', name: 'app_listing', priority: -99)]
     public function listing(string $categorySlug) : Response
     {
-        $currentPage    = $this->request->get('p') ?? 1; 
+        $currentPage    = $this->request->query->get('p') ?? 1; 
         $totalPages     = 99;
         $oPages =
             $this->paginator
